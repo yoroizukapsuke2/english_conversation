@@ -4,7 +4,7 @@ import time
 from pathlib import Path
 import wave
 import pyaudio
-from pydub import AudioSegment
+from pydub import AudioSegment, silence
 from audiorecorder import audiorecorder
 import numpy as np
 from scipy.io.wavfile import write
@@ -39,6 +39,15 @@ def record_audio(audio_input_file_path):
         audio.export(audio_input_file_path, format="wav")
         # ここでノイズ除去
         denoise_audio(audio_input_file_path)
+        # 無音除去を実行
+        sound = AudioSegment.from_wav(audio_input_file_path)
+        chunks = silence.split_on_silence(
+            sound,
+            min_silence_len=700,
+            silence_thresh=-40
+        )
+        processed = sum(chunks)
+        processed.export(audio_input_file_path, format="wav")
     else:
         st.stop()
 
