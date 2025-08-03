@@ -4,7 +4,7 @@ import time
 from pathlib import Path
 import wave
 import pyaudio
-from pydub import AudioSegment
+from pydub import AudioSegment, silence
 from audiorecorder import audiorecorder
 import numpy as np
 from scipy.io.wavfile import write
@@ -18,6 +18,8 @@ from langchain.memory import ConversationSummaryBufferMemory
 from langchain_openai import ChatOpenAI
 from langchain.chains import ConversationChain
 import constants as ct
+import noisereduce as nr
+import soundfile as sf
 
 def record_audio(audio_input_file_path):
     """
@@ -35,10 +37,29 @@ def record_audio(audio_input_file_path):
 
     if len(audio) > 0:
         audio.export(audio_input_file_path, format="wav")
+        # ここでノイズ除去
+        denoise_audio(audio_input_file_path)
+        # 無音除去を実行
+        sound = AudioSegment.from_wav(audio_input_file_path)
+        chunks = silence.split_on_silence(
+            sound,
+            min_silence_len=700,
+            silence_thresh=-40
+        )
+        processed = sum(chunks)
+        processed.export(audio_input_file_path, format="wav")
     else:
         st.stop()
 
-def transcribe_audio(audio_input_file_path):
+def denoise_audio(input_path):
+    """
+    WAVファイルに対してノイズ除去を行う
+    """
+    data, rate = sf.read(input_path)
+    reduced_noise = nr.reduce_noise(y=data, sr=rate)
+    sf.write(input_path, reduced_noise, rate)
+
+def transcribe_audio(audio_input_file_path, prompt=""):
     """
     音声入力ファイルから文字起こしテキストを取得
     Args:
@@ -49,7 +70,8 @@ def transcribe_audio(audio_input_file_path):
         transcript = st.session_state.openai_obj.audio.transcriptions.create(
             model="whisper-1",
             file=audio_input_file,
-            language="en"
+            language="en",
+            prompt=prompt
         )
     
     # 音声入力ファイルを削除

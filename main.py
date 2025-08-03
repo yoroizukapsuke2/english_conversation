@@ -138,7 +138,15 @@ if st.session_state.start_flg:
     # 「ディクテーション」ボタン押下時か、「英会話開始」ボタン押下時か、チャット送信時
     if st.session_state.mode == ct.MODE_3 and (st.session_state.dictation_button_flg or st.session_state.dictation_count == 0 or st.session_state.dictation_chat_message):
         if st.session_state.dictation_first_flg:
-            st.session_state.chain_create_problem = ft.create_chain(ct.SYSTEM_TEMPLATE_CREATE_PROBLEM)
+            # レベルに応じたテンプレートを選択
+            if st.session_state.englv == "初級者":
+                template = ct.SYSTEM_TEMPLATE_CREATE_PROBLEM_BEGINNER
+            elif st.session_state.englv == "中級者":
+                template = ct.SYSTEM_TEMPLATE_CREATE_PROBLEM_INTERMEDIATE
+            else:
+                template = ct.SYSTEM_TEMPLATE_CREATE_PROBLEM_ADVANCED
+
+            st.session_state.chain_create_problem = ft.create_chain(template)
             st.session_state.dictation_first_flg = False
         # チャット入力以外
         if not st.session_state.chat_open_flg:
@@ -196,7 +204,8 @@ if st.session_state.start_flg:
 
         # 音声入力ファイルから文字起こしテキストを取得
         with st.spinner('音声入力をテキストに変換中...'):
-            transcript = ft.transcribe_audio(audio_input_file_path)
+            whisper_prompt = ct.WHISPER_PROMPT_MAP.get(st.session_state.mode, "")
+            transcript = ft.transcribe_audio(audio_input_file_path, whisper_prompt)
             audio_input_text = transcript.text
 
         # 音声入力テキストの画面表示
@@ -234,7 +243,14 @@ if st.session_state.start_flg:
     # 「シャドーイング」ボタン押下時か、「英会話開始」ボタン押下時
     if st.session_state.mode == ct.MODE_2 and (st.session_state.shadowing_button_flg or st.session_state.shadowing_count == 0 or st.session_state.shadowing_audio_input_flg):
         if st.session_state.shadowing_first_flg:
-            st.session_state.chain_create_problem = ft.create_chain(ct.SYSTEM_TEMPLATE_CREATE_PROBLEM)
+            # レベルに応じたテンプレートを選択
+            if st.session_state.englv == "初級者":
+                template = ct.SYSTEM_TEMPLATE_CREATE_PROBLEM_BEGINNER
+            elif st.session_state.englv == "中級者":
+                template = ct.SYSTEM_TEMPLATE_CREATE_PROBLEM_INTERMEDIATE
+            else:
+                template = ct.SYSTEM_TEMPLATE_CREATE_PROBLEM_ADVANCED
+            st.session_state.chain_create_problem = ft.create_chain(template)
             st.session_state.shadowing_first_flg = False
         
         if not st.session_state.shadowing_audio_input_flg:
@@ -249,7 +265,8 @@ if st.session_state.start_flg:
 
         with st.spinner('音声入力をテキストに変換中...'):
             # 音声入力ファイルから文字起こしテキストを取得
-            transcript = ft.transcribe_audio(audio_input_file_path)
+            whisper_prompt = ct.WHISPER_PROMPT_MAP.get(st.session_state.mode, "")
+            transcript = ft.transcribe_audio(audio_input_file_path, whisper_prompt)
             audio_input_text = transcript.text
 
         # AIメッセージとユーザーメッセージの画面表示
