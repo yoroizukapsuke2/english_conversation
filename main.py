@@ -196,7 +196,8 @@ if st.session_state.start_flg:
 
         # 音声入力ファイルから文字起こしテキストを取得
         with st.spinner('音声入力をテキストに変換中...'):
-            transcript = ft.transcribe_audio(audio_input_file_path)
+            whisper_prompt = ct.WHISPER_PROMPT_MAP.get(st.session_state.mode, "")
+            transcript = ft.transcribe_audio(audio_input_file_path, whisper_prompt)
             audio_input_text = transcript.text
 
         # 音声入力テキストの画面表示
@@ -249,7 +250,8 @@ if st.session_state.start_flg:
 
         with st.spinner('音声入力をテキストに変換中...'):
             # 音声入力ファイルから文字起こしテキストを取得
-            transcript = ft.transcribe_audio(audio_input_file_path)
+            whisper_prompt = ct.WHISPER_PROMPT_MAP.get(st.session_state.mode, "")
+            transcript = ft.transcribe_audio(audio_input_file_path, whisper_prompt)
             audio_input_text = transcript.text
 
         # AIメッセージとユーザーメッセージの画面表示

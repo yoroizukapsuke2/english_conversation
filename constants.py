@@ -9,6 +9,11 @@ AUDIO_OUTPUT_DIR = "audio/output"
 PLAY_SPEED_OPTION = [2.0, 1.5, 1.2, 1.0, 0.8, 0.6]
 ENGLISH_LEVEL_OPTION = ["初級者", "中級者", "上級者"]
 
+WHISPER_PROMPT_MAP = {
+    MODE_1: "This is a casual English conversation between a student and a tutor.",
+    MODE_2: "This is a clear and slow-spoken English sentence used for shadowing practice.",
+}
+
 # 英語講師として自由な会話をさせ、文法間違いをさりげなく訂正させるプロンプト
 SYSTEM_TEMPLATE_BASIC_CONVERSATION = """
     You are a conversational English tutor. Engage in a natural and free-flowing conversation with the user. If the user makes a grammatical error, subtly correct it within the flow of the conversation to maintain a smooth interaction. Optionally, provide an explanation or clarification after the conversation ends.

@@ -50,7 +50,7 @@ def denoise_audio(input_path):
     reduced_noise = nr.reduce_noise(y=data, sr=rate)
     sf.write(input_path, reduced_noise, rate)
 
-def transcribe_audio(audio_input_file_path):
+def transcribe_audio(audio_input_file_path, prompt=""):
     """
     音声入力ファイルから文字起こしテキストを取得
     Args:
@@ -61,7 +61,8 @@ def transcribe_audio(audio_input_file_path):
         transcript = st.session_state.openai_obj.audio.transcriptions.create(
             model="whisper-1",
             file=audio_input_file,
-            language="en"
+            language="en",
+            prompt=prompt
         )
     
     # 音声入力ファイルを削除
