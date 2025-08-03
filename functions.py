@@ -18,6 +18,8 @@ from langchain.memory import ConversationSummaryBufferMemory
 from langchain_openai import ChatOpenAI
 from langchain.chains import ConversationChain
 import constants as ct
+import noisereduce as nr
+import soundfile as sf
 
 def record_audio(audio_input_file_path):
     """
@@ -35,8 +37,18 @@ def record_audio(audio_input_file_path):
 
     if len(audio) > 0:
         audio.export(audio_input_file_path, format="wav")
+        # ここでノイズ除去
+        denoise_audio(audio_input_file_path)
     else:
         st.stop()
+
+def denoise_audio(input_path):
+    """
+    WAVファイルに対してノイズ除去を行う
+    """
+    data, rate = sf.read(input_path)
+    reduced_noise = nr.reduce_noise(y=data, sr=rate)
+    sf.write(input_path, reduced_noise, rate)
 
 def transcribe_audio(audio_input_file_path):
     """
