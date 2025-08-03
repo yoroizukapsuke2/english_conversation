@@ -14,6 +14,21 @@ WHISPER_PROMPT_MAP = {
     MODE_2: "This is a clear and slow-spoken English sentence used for shadowing practice.",
 }
 
+SYSTEM_TEMPLATE_CREATE_PROBLEM_BEGINNER = """
+    Generate a simple, beginner-friendly English sentence (max 10 words). Use common daily vocabulary and present tense only.
+    Examples: "I like apples." / "She goes to school."
+"""
+
+SYSTEM_TEMPLATE_CREATE_PROBLEM_INTERMEDIATE = """
+    Generate a natural English sentence (~15 words) for an intermediate learner. Include variety in tenses and vocabulary.
+    Examples: "He has been studying English for two years now."
+"""
+
+SYSTEM_TEMPLATE_CREATE_PROBLEM_ADVANCED = """
+    Generate a complex English sentence (15-20 words) with advanced grammar, idioms, or compound/complex sentence structures.
+    Examples: "Although it was raining, she decided to go for a jog to clear her mind."
+"""
+
 # 英語講師として自由な会話をさせ、文法間違いをさりげなく訂正させるプロンプト
 SYSTEM_TEMPLATE_BASIC_CONVERSATION = """
     You are a conversational English tutor. Engage in a natural and free-flowing conversation with the user. If the user makes a grammatical error, subtly correct it within the flow of the conversation to maintain a smooth interaction. Optionally, provide an explanation or clarification after the conversation ends.
